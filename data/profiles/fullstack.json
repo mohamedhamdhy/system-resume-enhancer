@@ -1,0 +1,101 @@
+{
+  "id": "fullstack-profile",
+  "name": "Full Stack Resume",
+  "role": "fullstack",
+  "basics": {
+    "fullName": "Mohamed Al Hamdhy",
+    "title": "Full-Stack Developer",
+    "location": "Dubai, UAE",
+    "phone": "+971-54-726-7857",
+    "email": "mohamedalhamdhy@gmail.com",
+    "links": {
+      "portfolio": "",
+      "github": "",
+      "linkedin": ""
+    },
+    "summary": "Full-Stack Developer (MERN) with 3+ years UAE experience architecting high-performance enterprise systems. Reduced latency by 30% via optimized data architectures and accelerated deployments by 40% through CI/CD automation. Delivered production-ready solutions with 99.9% reliability and seamless third-party integrations."
+  },
+  "skills": {
+    "languages_frameworks": [
+      "JavaScript",
+      "Python",
+      "PHP",
+      "Node.js",
+      "Express.js",
+      "Nest.js",
+      "React",
+      "Next.js",
+      "Flutter"
+    ],
+    "databases_caching": [
+      "MySQL",
+      "PostgreSQL",
+      "MongoDB",
+      "Redis"
+    ],
+    "devops_cloud": [
+      "AWS (EC2, RDS, Lambda)",
+      "Docker",
+      "Jenkins (CI/CD)",
+      "GitHub"
+    ],
+    "other": [
+      "System Architecture & Design",
+      "Performance Engineering",
+      "DevOps & Reliability"
+    ],
+    "profile": {
+      "nationality": "Sri Lanka Native",
+      "languages": ["English", "Tamil"]
+    }
+  },
+  "experience": [
+    {
+      "company": "AL Thario FZE",
+      "location": "Dubai",
+      "duration": "2023 - 2026",
+      "role": "Software Engineer",
+      "bullets": [
+        "Built Node.js/Nest.js backends, reducing latency by 25% through event-driven architectures.",
+        "Accelerated React/Next.js performance by 30% through SSR and modular TypeScript architectures.",
+        "Optimized Flutter app performance by 25% using Provider and streamlined async data architectures.",
+        "Architected Redis caching, cutting PostgreSQL/MongoDB latency by 30% and reducing database load.",
+        "Integrated Stripe, GraphQL, and WebSockets, improving real-time data and payment workflows by 20%.",
+        "Automated AWS, Docker, and Kubernetes pipelines via Jenkins, cutting deployment time by 40%."
+      ]
+    },
+    {
+      "company": "Alpha Minds",
+      "location": "Sri Lanka",
+      "duration": "2022 - 2023",
+      "role": "Junior Software Engineer",
+      "bullets": [
+        "Developed Node.js/Nest.js backends, improving API response times and data security by 20%.",
+        "Implemented React/Next.js components, boosting development speed by 20% via reusable UI libraries.",
+        "Boosted PostgreSQL and MongoDB speeds by 20% via indexing and schema optimization.",
+        "Streamlined CI/CD pipelines, cutting deployment time by 20% via automated build/preview environments."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "E-Commerce",
+      "bullets": [
+        "Scaled to 10k+ users and boosted conversion by 15% via AI-driven multi-currency checkout."
+      ]
+    },
+    {
+      "name": "Digital POS",
+      "bullets": [
+        "Built a VAT-compliant, offline-first system with 99.9% sync accuracy and zero data loss."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "BSc (Hons) in Software Engineering",
+      "institution": "Cardiff Metropolitan, UK",
+      "duration": "2021 - 2025"
+    }
+  ]
+}

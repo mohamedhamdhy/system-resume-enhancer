@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RESUMESYS_v1.0.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="scanlines"></div>
+    <div class="grid-bg"></div>
+
+    <div class="boot-screen" id="bootScreen">
+      <div class="boot-text" id="bootText"></div>
+    </div>
+
+    <div class="dashboard" id="dashboard" style="display: none">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="sys-id">RESUMESYS_v1.0.0</span>
+          <span class="divider">|</span>
+          <span class="operator">OPERATOR: <strong>HAMDHY</strong></span>
+        </div>
+        <div class="topbar-center">
+          <div class="radar-dot"></div>
+          <span class="status-text" id="sysStatus">ALL SYSTEMS NOMINAL</span>
+        </div>
+        <div class="topbar-right">
+          <span class="clock" id="clock"></span>
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <aside class="left-panel">
+          <div class="panel-block">
+            <div class="panel-label">// RESUME PROFILE</div>
+            <select id="profileSelect" class="sys-select">
+              <option value="">— SELECT PROFILE —</option>
+            </select>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// JD INPUT</div>
+            <div class="mode-btns">
+              <button
+                class="mode-btn active"
+                data-jdmode="text"
+                onclick="setJDMode('text')"
+              >
+                ✏ TEXT
+              </button>
+              <button
+                class="mode-btn"
+                data-jdmode="url"
+                onclick="setJDMode('url')"
+              >
+                🌐 URL
+              </button>
+            </div>
+            <div id="jdTextMode">
+              <textarea
+                id="jdText"
+                class="sys-textarea"
+                placeholder="Paste job description here..."
+              ></textarea>
+            </div>
+            <div id="jdUrlMode" style="display: none">
+              <div class="input-row">
+                <label class="input-label">URL</label>
+                <input
+                  type="text"
+                  id="jdUrl"
+                  class="sys-input"
+                  placeholder="https://linkedin.com/jobs/..."
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// OPTIMIZATION</div>
+            <div class="input-row">
+              <label class="input-label">COMPANY</label
+              ><input
+                type="text"
+                id="companyInput"
+                class="sys-input"
+                placeholder="Google"
+              />
+            </div>
+            <div class="input-row">
+              <label class="input-label">ROLE</label
+              ><input
+                type="text"
+                id="roleInput"
+                class="sys-input"
+                placeholder="Senior Developer"
+              />
+            </div>
+            <div class="panel-label" style="margin-top: 0.4rem">
+              REWRITE MODE
+            </div>
+            <div class="mode-btns">
+              <button
+                class="mode-btn"
+                data-mode="minimal"
+                onclick="setMode('minimal')"
+              >
+                MINIMAL
+              </button>
+              <button
+                class="mode-btn active"
+                data-mode="balanced"
+                onclick="setMode('balanced')"
+              >
+                BALANCED
+              </button>
+              <button
+                class="mode-btn"
+                data-mode="aggressive"
+                onclick="setMode('aggressive')"
+              >
+                ATS MAX
+              </button>
+            </div>
+            <div class="input-row">
+              <label class="input-label">MAX CHARS/BULLET</label>
+              <input
+                type="number"
+                id="maxChars"
+                class="sys-input"
+                value="180"
+                min="100"
+                max="300"
+              />
+            </div>
+          </div>
+
+          <div class="action-btns">
+            <button class="fire-btn" id="parseJDBtn">
+              <span class="fire-label">⚡ PARSE JD FIRST</span>
+              <div class="fire-scan"></div>
+            </button>
+            <button class="fire-btn green-fire" id="optimizeBtn" disabled>
+              <span class="fire-label">▶ OPTIMIZE RESUME</span>
+              <div class="fire-scan"></div>
+            </button>
+            <button class="stop-btn" id="abortBtn" disabled>■ ABORT</button>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// ATS SCORE</div>
+            <div class="ats-display">
+              <div class="ats-circle" id="atsCircle">
+                <svg viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="34" class="ats-bg" />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="34"
+                    class="ats-fill"
+                    id="atsFill"
+                    stroke-dasharray="0 213"
+                  />
+                </svg>
+                <div class="ats-num" id="atsNum">—</div>
+              </div>
+              <div class="ats-breakdown" id="atsBreakdown">
+                <div class="atb-row">
+                  <span>KEYWORDS</span>
+                  <div class="atb-bar-w">
+                    <div class="atb-bar" id="bKw" style="width: 0%"></div>
+                  </div>
+                  <span id="vKw">—</span>
+                </div>
+                <div class="atb-row">
+                  <span>SKILLS</span>
+                  <div class="atb-bar-w">
+                    <div class="atb-bar cyan" id="bSk" style="width: 0%"></div>
+                  </div>
+                  <span id="vSk">—</span>
+                </div>
+                <div class="atb-row">
+                  <span>SECTIONS</span>
+                  <div class="atb-bar-w">
+                    <div
+                      class="atb-bar yellow"
+                      id="bSc"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <span id="vSc">—</span>
+                </div>
+                <div class="atb-row">
+                  <span>FORMAT</span>
+                  <div class="atb-bar-w">
+                    <div class="atb-bar green" id="bFm" style="width: 0%"></div>
+                  </div>
+                  <span id="vFm">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-btns">
+            <button class="export-btn" id="dlResume" disabled>
+              ↓ DOWNLOAD RESUME.TXT
+            </button>
+          </div>
+        </aside>
+
+        <section class="right-panel">
+          <div class="tab-bar">
+            <button class="tab active" data-tab="live">FEED</button>
+            <button class="tab" data-tab="jd">JD ANALYSIS</button>
+            <button class="tab" data-tab="resume">RESUME PREVIEW</button>
+            <button class="tab" data-tab="gaps">SKILL GAPS</button>
+            <button class="tab" data-tab="kwmap">KW MAP</button>
+            <button class="tab" data-tab="tracker">TRACKER</button>
+            <button class="tab" data-tab="compare">COMPARE</button>
+            <div class="tab-count" id="tabAppCount">0</div>
+          </div>
+
+          <div class="tab-content active" id="tab-live">
+            <div class="feed-header">
+              <span>OPTIMIZATION FEED</span><span class="blink-dot"></span>
+            </div>
+            <div class="feed" id="liveFeed">
+              <div class="feed-idle">[ AWAITING JD INPUT... ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-jd">
+            <div class="feed-header">
+              <span>JD ANALYSIS</span
+              ><span
+                id="jdRoleLabel"
+                style="color: var(--cyan); font-size: 0.6rem"
+              ></span>
+            </div>
+            <div class="summary-panel" id="jdPanel">
+              <div class="feed-idle">[ PARSE A JOB DESCRIPTION FIRST ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-resume">
+            <div class="feed-header">
+              <span>OPTIMIZED RESUME</span>
+              <div style="display: flex; gap: 0.4rem">
+                <button class="wipe-btn" id="showDiff">SHOW CHANGES</button>
+                <button class="wipe-btn" id="copyResume" disabled>
+                  ⎘ COPY
+                </button>
+              </div>
+            </div>
+            <div class="summary-panel" id="resumePanel">
+              <div class="feed-idle">[ NO RESUME GENERATED YET ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-gaps">
+            <div class="feed-header"><span>SKILL GAP ANALYSIS</span></div>
+            <div class="feed" id="gapsFeed">
+              <div class="feed-idle">[ NO ANALYSIS YET ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-kwmap">
+            <div class="feed-header"><span>KEYWORD MAPPING</span></div>
+            <div class="feed" id="kwmapFeed">
+              <div class="feed-idle">[ NO KEYWORD MAP YET ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-tracker">
+            <div class="feed-header">
+              <span>APPLICATION TRACKER</span>
+              <span
+                id="trackerCount"
+                style="color: var(--muted); font-size: 0.6rem"
+                >0 applications</span
+              >
+            </div>
+            <div class="feed" id="trackerFeed">
+              <div class="feed-idle">[ NO APPLICATIONS YET ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-compare">
+            <div class="feed-header"><span>VERSION COMPARISON</span></div>
+            <div class="compare-panel">
+              <div class="compare-selects">
+                <select id="compareA" class="sys-select">
+                  <option value="">— VERSION A —</option>
+                </select>
+                <select id="compareB" class="sys-select">
+                  <option value="">— VERSION B —</option>
+                </select>
+                <button
+                  class="fire-btn"
+                  onclick="runCompare()"
+                  style="padding: 0.4rem 0.8rem; font-size: 0.65rem"
+                >
+                  ▶ COMPARE
+                </button>
+              </div>
+              <div class="feed" id="compareFeed" style="flex: 1; min-height: 0">
+                <div class="feed-idle">[ SELECT TWO VERSIONS ]</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>ENGINE: ATS-OPTIMIZER</span>
+        <span class="divider">|</span>
+        <span>REWRITE: HEURISTIC+AI</span>
+        <span class="divider">|</span>
+        <span>RULES: BULLET-COUNT-PRESERVED</span>
+        <span class="divider">|</span>
+        <span id="footerMode">MODE: BALANCED</span>
+      </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const BOOT = [
+        "RESUMESYS v1.0.0 INITIALIZING...",
+        "LOADING JD PARSER ENGINE... OK",
+        "LOADING ATS SCORING MODULE... OK",
+        "LOADING BULLET REWRITE ENGINE... OK",
+        "LOADING OVERFLOW PROTECTION... OK",
+        "LOADING SKILL GAP ANALYZER... OK",
+        "LOADING KEYWORD MAPPER... OK",
+        "LOADING APPLICATION TRACKER... OK",
+        "LOADING VERSION CONTROL... OK",
+        "ESTABLISHING SOCKET CONNECTION... OK",
+        "ALL SYSTEMS NOMINAL.",
+        "WELCOME, HAMDHY. READY TO OPTIMIZE.",
+      ];
+      let bi = 0;
+      const bootEl = document.getElementById("bootText");
+      function bootStep() {
+        if (bi < BOOT.length) {
+          bootEl.innerHTML += `<div class="boot-line">> ${BOOT[bi]}</div>`;
+          bi++;
+          setTimeout(bootStep, 160);
+        } else {
+          setTimeout(() => {
+            document.getElementById("bootScreen").style.opacity = "0";
+            setTimeout(() => {
+              document.getElementById("bootScreen").style.display = "none";
+              const d = document.getElementById("dashboard");
+              d.style.display = "flex";
+              d.style.animation = "fadeIn 0.4s ease";
+              init();
+            }, 400);
+          }, 500);
+        }
+      }
+      setTimeout(bootStep, 200);
+
+      setInterval(() => {
+        document.getElementById("clock").textContent =
+          new Date().toLocaleTimeString("en-GB", { hour12: false }) + " UTC";
+      }, 1000);
+
+      document.querySelectorAll(".tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-content")
+            .forEach((t) => t.classList.remove("active"));
+          btn.classList.add("active");
+          document
+            .getElementById("tab-" + btn.dataset.tab)
+            .classList.add("active");
+        });
+      });
+
+      let currentMode = "balanced";
+      let currentJDMode = "text";
+      let currentJD = null;
+      let currentOptimized = null;
+      let profiles = [];
+      let abortController = null;
+      let isRunning = false;
+      let showingDiff = false;
+
+      function setMode(m) {
+        currentMode = m;
+        document
+          .querySelectorAll("[data-mode]")
+          .forEach((b) => b.classList.remove("active"));
+        document.querySelector(`[data-mode="${m}"]`).classList.add("active");
+        document.getElementById("footerMode").textContent =
+          `MODE: ${m.toUpperCase()}`;
+      }
+
+      function setJDMode(m) {
+        currentJDMode = m;
+        document
+          .querySelectorAll("[data-jdmode]")
+          .forEach((b) => b.classList.remove("active"));
+        document.querySelector(`[data-jdmode="${m}"]`).classList.add("active");
+        document.getElementById("jdTextMode").style.display =
+          m === "text" ? "" : "none";
+        document.getElementById("jdUrlMode").style.display =
+          m === "url" ? "" : "none";
+      }
+
+      async function init() {
+        await loadProfiles();
+        await loadApplications();
+        await loadVersionsForCompare();
+      }
+
+      async function loadProfiles() {
+        try {
+          const res = await fetch("/api/profiles");
+          profiles = await res.json();
+          const sel = document.getElementById("profileSelect");
+          sel.innerHTML = '<option value="">— SELECT PROFILE —</option>';
+          profiles.forEach((p) => {
+            sel.innerHTML += `<option value="${p.id}">${p.name} — ${p.title}</option>`;
+          });
+          if (profiles.length > 0) sel.value = profiles[0].id;
+        } catch (_) {}
+      }
+
+      document
+        .getElementById("parseJDBtn")
+        .addEventListener("click", async () => {
+          const text =
+            currentJDMode === "text"
+              ? document.getElementById("jdText").value.trim()
+              : "";
+          const url =
+            currentJDMode === "url"
+              ? document.getElementById("jdUrl").value.trim()
+              : "";
+          if (!text && !url) {
+            addLive("error", "NO JD — paste text or enter URL");
+            return;
+          }
+
+          addLive("info", "PARSING JOB DESCRIPTION...");
+          setStatus("PARSING JD...");
+
+          try {
+            const res = await fetch("/api/parse-jd", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text, url }),
+            });
+            currentJD = await res.json();
+            renderJD(currentJD);
+            document.getElementById("optimizeBtn").disabled = false;
+            addLive(
+              "success",
+              `✅ JD PARSED — ${currentJD.requiredSkills.length} required skills · ${currentJD.keywords.length} keywords`,
+            );
+            setStatus("JD PARSED — READY TO OPTIMIZE");
+            activateTab("jd");
+            if (
+              currentJD.company &&
+              !document.getElementById("companyInput").value
+            )
+              document.getElementById("companyInput").value = currentJD.company;
+            if (currentJD.role && !document.getElementById("roleInput").value)
+              document.getElementById("roleInput").value = currentJD.role;
+          } catch (err) {
+            addLive("error", `JD PARSE FAILED: ${err.message}`);
+          }
+        });
+
+      document
+        .getElementById("optimizeBtn")
+        .addEventListener("click", async () => {
+          if (isRunning) return;
+          const profileId = document.getElementById("profileSelect").value;
+          if (!profileId) {
+            addLive("error", "SELECT A RESUME PROFILE FIRST");
+            return;
+          }
+          if (!currentJD) {
+            addLive("error", "PARSE THE JD FIRST");
+            return;
+          }
+
+          const profile = profiles.find((p) => p.id === profileId);
+          if (!profile) return;
+
+          isRunning = true;
+          abortController = new AbortController();
+          document.getElementById("optimizeBtn").disabled = true;
+          document
+            .getElementById("optimizeBtn")
+            .querySelector(".fire-label").textContent = "⟳ OPTIMIZING...";
+          document.getElementById("abortBtn").disabled = false;
+          activateTab("live");
+          setStatus("OPTIMIZING RESUME...");
+
+          const body = {
+            profileId,
+            jdText:
+              currentJDMode === "text"
+                ? document.getElementById("jdText").value
+                : currentJD.rawText,
+            jdUrl:
+              currentJDMode === "url"
+                ? document.getElementById("jdUrl").value
+                : "",
+            mode: currentMode,
+            company: document.getElementById("companyInput").value,
+            role: document.getElementById("roleInput").value,
+            maxBulletChars:
+              parseInt(document.getElementById("maxChars").value) || 180,
+            includedExperienceIds: profile.experience.map((e) => e.id),
+            includedProjectIds: profile.projects.map((p) => p.id),
+          };
+
+          try {
+            const res = await fetch("/api/optimize", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+              signal: abortController.signal,
+            });
+            if (!res.ok) throw new Error(await res.text());
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              if (!value) continue;
+              const lines = decoder
+                .decode(value)
+                .split("\n")
+                .filter((l) => l.trim());
+              for (const line of lines) {
+                if (line === "DONE" || line === "ERROR") continue;
+                const t = line.startsWith("❌")
+                  ? "error"
+                  : line.startsWith("✅")
+                    ? "success"
+                    : "info";
+                addLive(t, line);
+                setStatus(
+                  line
+                    .replace(/[✅❌]/g, "")
+                    .trim()
+                    .substring(0, 65),
+                );
+              }
+            }
+          } catch (err) {
+            if (err.name !== "AbortError")
+              addLive("error", `FATAL: ${err.message}`);
+            else addLive("error", "■ ABORTED");
+          } finally {
+            isRunning = false;
+            document.getElementById("optimizeBtn").disabled = false;
+            document
+              .getElementById("optimizeBtn")
+              .querySelector(".fire-label").textContent = "▶ OPTIMIZE RESUME";
+            document.getElementById("abortBtn").disabled = true;
+          }
+        });
+
+      document.getElementById("abortBtn").addEventListener("click", () => {
+        if (abortController) abortController.abort();
+      });
+
+      const socket = io();
+      socket.on("optimization-complete", ({ optimized, application }) => {
+        currentOptimized = optimized;
+        renderOptimized(optimized, application);
+        loadApplications();
+        loadVersionsForCompare();
+      });
+
+      const devSocket = io("http://localhost:3001");
+      devSocket.on("reload", () => location.reload());
+
+      function renderJD(jd) {
+        document.getElementById("jdRoleLabel").textContent = jd.role || "";
+        const panel = document.getElementById("jdPanel");
+        panel.innerHTML = `
+      <div class="sum-sec">
+        <div class="sum-lbl">REQUIRED SKILLS (${jd.requiredSkills.length})</div>
+        <div class="tag-cloud">${jd.requiredSkills.map((s) => `<span class="tag tag-req">${esc(s)}</span>`).join("")}</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-lbl">NICE-TO-HAVE (${jd.niceToHaveSkills.length})</div>
+        <div class="tag-cloud">${jd.niceToHaveSkills.map((s) => `<span class="tag tag-nth">${esc(s)}</span>`).join("")}</div>
+      </div>
+      ${jd.experienceRequired ? `<div class="sum-sec"><div class="sum-lbl">EXPERIENCE REQUIRED</div><div class="sum-text">${esc(jd.experienceRequired)}</div></div>` : ""}
+      <div class="sum-sec">
+        <div class="sum-lbl">KEY TERMS FREQUENCY</div>
+        <table class="kw-table">
+          <thead><tr><th>TERM</th><th>FREQ</th><th>CATEGORY</th></tr></thead>
+          <tbody>${jd.keywords
+            .slice(0, 20)
+            .map(
+              (k) => `
+            <tr>
+              <td class="kw-term">${esc(k.term)}</td>
+              <td class="kw-freq">${k.frequency}</td>
+              <td><span class="tag tag-${k.category === "required" ? "req" : k.category === "nice-to-have" ? "nth" : "gen"}" style="font-size:0.5rem">${k.category}</span></td>
+            </tr>`,
+            )
+            .join("")}
+          </tbody>
+        </table>
+      </div>
+      ${
+        jd.responsibilities.length > 0
+          ? `
+        <div class="sum-sec">
+          <div class="sum-lbl">RESPONSIBILITIES (${jd.responsibilities.length})</div>
+          <ul class="resp-list">${jd.responsibilities.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
+        </div>`
+          : ""
+      }
+    `;
+      }
+
+      function renderOptimized(opt, app) {
+        const score = opt.atsScore;
+        const circ = 213;
+        const fill = Math.round((score / 100) * circ);
+        document
+          .getElementById("atsFill")
+          .setAttribute("stroke-dasharray", `${fill} ${circ - fill}`);
+        document.getElementById("atsNum").textContent = score;
+        document
+          .getElementById("atsCircle")
+          .setAttribute(
+            "data-grade",
+            score >= 80 ? "green" : score >= 65 ? "yellow" : "red",
+          );
+
+        setBar("Kw", opt.atsBreakdown.keywordMatch);
+        setBar("Sk", opt.atsBreakdown.skillAlignment);
+        setBar("Sc", opt.atsBreakdown.sectionCompleteness);
+        setBar("Fm", opt.atsBreakdown.formatScore);
+
+        document.getElementById("dlResume").disabled = false;
+        document.getElementById("copyResume").disabled = false;
+
+        renderResumePreview(opt, false);
+
+        renderSkillGaps(opt.skillGaps, opt.atsBreakdown.suggestions);
+
+        renderKeywordMap(opt.keywordMap);
+
+        activateTab("resume");
+        setStatus(
+          `✅ ATS: ${score}/100 · ${opt.bulletChanges.length} bullets changed · ${opt.skillGaps.filter((g) => g.type === "required").length} gaps`,
+        );
+        addLive(
+          "success",
+          `✅ OPTIMIZED — ATS ${score}/100 · ${opt.company} · ${opt.role}`,
+        );
+      }
+
+      function setBar(key, val) {
+        document.getElementById("b" + key).style.width = val + "%";
+        document.getElementById("v" + key).textContent = val;
+      }
+
+      document.getElementById("showDiff").addEventListener("click", () => {
+        showingDiff = !showingDiff;
+        document.getElementById("showDiff").textContent = showingDiff
+          ? "HIDE CHANGES"
+          : "SHOW CHANGES";
+        if (currentOptimized)
+          renderResumePreview(currentOptimized, showingDiff);
+      });
+
+      function renderResumePreview(opt, diff) {
+        const p = opt.optimizedProfile;
+        const panel = document.getElementById("resumePanel");
+        panel.innerHTML = `
+      <div class="resume-doc">
+        <div class="r-header">
+          <div class="r-name">${esc(p.title)}</div>
+          <div class="r-contact">
+            ${p.contact.email} ${p.contact.phone ? "· " + p.contact.phone : ""} ${p.contact.linkedin ? "· " + p.contact.linkedin : ""}
+            ${p.contact.github ? "· " + p.contact.github : ""} ${p.contact.location ? "· " + p.contact.location : ""}
+          </div>
+        </div>
+
+        <div class="r-section">
+          <div class="r-section-title">PROFESSIONAL SUMMARY</div>
+          <div class="r-summary ${diff && opt.originalProfile.summary !== p.summary ? "changed-text" : ""}">${esc(p.summary)}</div>
+        </div>
+
+        <div class="r-section">
+          <div class="r-section-title">SKILLS</div>
+          <div class="r-skills">${p.skills
+            .map(
+              (cat) => `
+            <div class="r-skill-cat"><span class="r-skill-name">${esc(cat.category)}:</span>
+            ${cat.items.map((s) => `<span class="r-skill-item">${esc(s)}</span>`).join("")}</div>`,
+            )
+            .join("")}
+          </div>
+        </div>
+
+        <div class="r-section">
+          <div class="r-section-title">EXPERIENCE</div>
+          ${p.experience
+            .map(
+              (exp) => `
+            <div class="r-exp">
+              <div class="r-exp-header">
+                <span class="r-exp-role">${esc(exp.role)}</span>
+                <span class="r-exp-period">${esc(exp.period)}</span>
+              </div>
+              <div class="r-exp-company">${esc(exp.company)} ${exp.location ? "· " + exp.location : ""}</div>
+              <ul class="r-bullets">
+                ${exp.bullets
+                  .map((b, i) => {
+                    const changed = diff && b.changed;
+                    const bc = opt.bulletChanges.find(
+                      (c) => c.experienceId === exp.id && c.bulletIndex === i,
+                    );
+                    return `<li class="${changed ? "bullet-changed" : ""}">
+                    ${changed && bc ? `<div class="bullet-orig">BEFORE: ${esc(bc.original)}</div>` : ""}
+                    <div class="bullet-new">${esc(b.optimized || b.text)}
+                      ${changed && bc?.keywordsAdded?.length ? `<span class="kw-added-badge">+${bc.keywordsAdded.slice(0, 3).join(", ")}</span>` : ""}
+                    </div>
+                    <div class="bullet-charcount ${(b.optimized || b.text).length > 170 ? "warn" : ""}">${(b.optimized || b.text).length} chars</div>
+                  </li>`;
+                  })
+                  .join("")}
+              </ul>
+            </div>`,
+            )
+            .join("")}
+        </div>
+
+        ${
+          p.projects.length > 0
+            ? `
+        <div class="r-section">
+          <div class="r-section-title">PROJECTS</div>
+          ${p.projects
+            .map(
+              (proj) => `
+            <div class="r-exp">
+              <div class="r-exp-header">
+                <span class="r-exp-role">${esc(proj.name)}</span>
+                ${proj.url ? `<a href="${proj.url}" class="r-link">${esc(proj.url)}</a>` : ""}
+              </div>
+              <div class="r-exp-company">${proj.tech.join(" · ")}</div>
+              <ul class="r-bullets">${proj.bullets
+                .map(
+                  (b) =>
+                    `<li><div class="bullet-new">${esc(b.optimized || b.text)}</div></li>`,
+                )
+                .join("")}</ul>
+            </div>`,
+            )
+            .join("")}
+        </div>`
+            : ""
+        }
+
+        <div class="r-section">
+          <div class="r-section-title">EDUCATION</div>
+          ${p.education
+            .map(
+              (e) => `
+            <div class="r-exp">
+              <div class="r-exp-header"><span class="r-exp-role">${esc(e.degree)}</span><span class="r-exp-period">${esc(e.period)}</span></div>
+              <div class="r-exp-company">${esc(e.institution)}${e.gpa ? " · GPA: " + e.gpa : ""}</div>
+            </div>`,
+            )
+            .join("")}
+        </div>
+
+        ${
+          p.certifications?.length
+            ? `
+        <div class="r-section">
+          <div class="r-section-title">CERTIFICATIONS</div>
+          <div class="r-certs">${p.certifications.map((c) => `<span class="tag tag-req">${esc(c)}</span>`).join("")}</div>
+        </div>`
+            : ""
+        }
+      </div>`;
+      }
+
+      function renderSkillGaps(gaps, suggestions) {
+        const feed = document.getElementById("gapsFeed");
+        const req = gaps.filter((g) => g.type === "required");
+        const nth = gaps.filter((g) => g.type === "nice-to-have");
+        feed.innerHTML = `
+      ${
+        suggestions?.length
+          ? `
+        <div class="gap-section"><div class="gap-title">ATS SUGGESTIONS</div>
+          ${suggestions.map((s) => `<div class="gap-item sug"><span class="gap-icon">💡</span><span>${esc(s)}</span></div>`).join("")}
+        </div>`
+          : ""
+      }
+      ${
+        req.length
+          ? `
+        <div class="gap-section"><div class="gap-title">REQUIRED SKILLS MISSING (${req.length})</div>
+          ${req.map((g) => `<div class="gap-item req"><span class="gap-icon">🔴</span><div><div class="gap-skill">${esc(g.skill)}</div><div class="gap-sug">${esc(g.suggestion)}</div></div></div>`).join("")}
+        </div>`
+          : '<div class="gap-section"><div class="gap-title">✅ ALL REQUIRED SKILLS COVERED</div></div>'
+      }
+      ${
+        nth.length
+          ? `
+        <div class="gap-section"><div class="gap-title">OPTIONAL GAPS (${nth.length})</div>
+          ${nth.map((g) => `<div class="gap-item nth"><span class="gap-icon">🟡</span><div><div class="gap-skill">${esc(g.skill)}</div><div class="gap-sug">${esc(g.suggestion)}</div></div></div>`).join("")}
+        </div>`
+          : ""
+      }`;
+      }
+
+      function renderKeywordMap(kwmap) {
+        const feed = document.getElementById("kwmapFeed");
+        const matched = kwmap.filter((k) => k.status === "matched");
+        const partial = kwmap.filter((k) => k.status === "partial");
+        const missing = kwmap.filter((k) => k.status === "missing");
+        feed.innerHTML = `
+      <div style="padding:0.5rem 0.75rem;font-size:0.6rem;letter-spacing:0.1em;color:var(--muted);border-bottom:1px solid var(--border)">
+        ✅ MATCHED: ${matched.length} &nbsp;|&nbsp; ⚠ PARTIAL: ${partial.length} &nbsp;|&nbsp; ❌ MISSING: ${missing.length}
+      </div>
+      <table class="kw-table" style="margin:0">
+        <thead><tr><th>JD REQUIREMENT</th><th>RESUME MATCH</th><th>STATUS</th><th>SECTION</th></tr></thead>
+        <tbody>${kwmap
+          .map(
+            (k) => `
+          <tr>
+            <td class="kw-term">${esc(k.jdRequirement)}</td>
+            <td style="color:${k.status === "matched" ? "var(--green)" : k.status === "partial" ? "var(--yellow)" : "var(--muted)"}">${k.resumeMatch ? esc(k.resumeMatch) : "—"}</td>
+            <td><span class="status-badge status-${k.status}">${k.status === "matched" ? "✅" : k.status === "partial" ? "⚠" : "❌"} ${k.status.toUpperCase()}</span></td>
+            <td style="color:var(--muted);font-size:0.6rem">${k.section || "—"}</td>
+          </tr>`,
+          )
+          .join("")}
+        </tbody>
+      </table>`;
+      }
+
+      async function loadApplications() {
+        try {
+          const res = await fetch("/api/applications");
+          const apps = await res.json();
+          document.getElementById("trackerCount").textContent =
+            `${apps.length} applications`;
+          document.getElementById("tabAppCount").textContent = apps.length;
+          const feed = document.getElementById("trackerFeed");
+          if (apps.length === 0) {
+            feed.innerHTML = `<div class="feed-idle">[ NO APPLICATIONS YET ]</div>`;
+            return;
+          }
+          const STATUSES = [
+            "applied",
+            "viewed",
+            "shortlisted",
+            "interview",
+            "offer",
+            "rejected",
+          ];
+          const COLORS = {
+            applied: "cyan",
+            viewed: "cyan",
+            shortlisted: "yellow",
+            interview: "green",
+            offer: "green",
+            rejected: "red",
+          };
+          feed.innerHTML = apps
+            .map(
+              (app) => `
+        <div class="app-card">
+          <div class="app-header">
+            <div class="app-role">${esc(app.role)}</div>
+            <div class="app-company">${esc(app.company)}</div>
+            <div class="app-ats"><span class="ats-badge">${app.atsScore}</span></div>
+          </div>
+          <div class="app-timeline">
+            ${STATUSES.map(
+              (s) => `
+              <div class="tl-step ${app.status === s ? "active" : ""} ${isCompleted(app.status, s) ? "done" : ""}">
+                <div class="tl-dot"></div>
+                <div class="tl-label">${s.toUpperCase()}</div>
+              </div>`,
+            ).join('<div class="tl-line"></div>')}
+          </div>
+          <div class="app-footer">
+            <span style="color:var(--muted);font-size:0.58rem">${new Date(app.appliedAt).toLocaleDateString()} · ${app.profileName}</span>
+            <div style="display:flex;gap:0.4rem">
+              <select class="status-sel" onchange="updateStatus('${app.id}', this.value)">
+                ${STATUSES.map((s) => `<option value="${s}" ${app.status === s ? "selected" : ""}>${s.toUpperCase()}</option>`).join("")}
+              </select>
+              <button class="eject-btn" onclick="deleteApp('${app.id}')">✕</button>
+            </div>
+          </div>
+          ${
+            app.missingSkills?.length
+              ? `<div class="app-gaps">Missing: ${app.missingSkills
+                  .slice(0, 4)
+                  .map(
+                    (s) =>
+                      `<span class="tag tag-req" style="font-size:0.5rem">${esc(s)}</span>`,
+                  )
+                  .join("")}</div>`
+              : ""
+          }
+        </div>`,
+            )
+            .join("");
+        } catch (_) {}
+      }
+
+      const STATUS_ORDER = [
+        "applied",
+        "viewed",
+        "shortlisted",
+        "interview",
+        "offer",
+        "rejected",
+      ];
+      function isCompleted(current, step) {
+        if (current === "rejected") return false;
+        return STATUS_ORDER.indexOf(current) > STATUS_ORDER.indexOf(step);
+      }
+
+      async function updateStatus(id, status) {
+        await fetch(`/api/applications/${id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+        loadApplications();
+      }
+
+      async function deleteApp(id) {
+        if (!confirm("DELETE APPLICATION?")) return;
+        await fetch(`/api/applications/${id}`, { method: "DELETE" });
+        loadApplications();
+      }
+
+      async function loadVersionsForCompare() {
+        try {
+          const res = await fetch("/api/versions");
+          const versions = await res.json();
+          ["compareA", "compareB"].forEach((id) => {
+            const sel = document.getElementById(id);
+            const cur = sel.value;
+            sel.innerHTML = `<option value="">— SELECT —</option>`;
+            versions.forEach((v) => {
+              sel.innerHTML += `<option value="${v.id}">${v.company} · ${v.role} · ATS:${v.atsScore} · ${new Date(v.createdAt).toLocaleDateString()}</option>`;
+            });
+            if (cur) sel.value = cur;
+          });
+        } catch (_) {}
+      }
+
+      async function runCompare() {
+        const idA = document.getElementById("compareA").value;
+        const idB = document.getElementById("compareB").value;
+        if (!idA || !idB) {
+          alert("Select two versions");
+          return;
+        }
+        const feed = document.getElementById("compareFeed");
+        try {
+          const res = await fetch(`/api/compare/${idA}/${idB}`);
+          const cmp = await res.json();
+          feed.innerHTML = `
+        <div class="gap-section">
+          <div class="gap-title">ATS DELTA</div>
+          <div class="ats-delta ${cmp.atsDelta >= 0 ? "pos" : "neg"}">${cmp.atsDelta >= 0 ? "+" : ""}${cmp.atsDelta} points</div>
+          <div style="font-size:0.62rem;color:var(--muted);padding:0 0.75rem">${cmp.versionA.company}/${cmp.versionA.role} vs ${cmp.versionB.company}/${cmp.versionB.role}</div>
+        </div>
+        ${
+          cmp.keywordsAdded.length
+            ? `
+          <div class="gap-section"><div class="gap-title">KEYWORDS ADDED IN V2 (${cmp.keywordsAdded.length})</div>
+            <div class="tag-cloud">${cmp.keywordsAdded.map((k) => `<span class="tag tag-req">${esc(k)}</span>`).join("")}</div>
+          </div>`
+            : ""
+        }
+        ${
+          cmp.keywordsRemoved.length
+            ? `
+          <div class="gap-section"><div class="gap-title">KEYWORDS REMOVED (${cmp.keywordsRemoved.length})</div>
+            <div class="tag-cloud">${cmp.keywordsRemoved.map((k) => `<span class="tag tag-nth">${esc(k)}</span>`).join("")}</div>
+          </div>`
+            : ""
+        }
+        ${
+          cmp.bulletChanges.length
+            ? `
+          <div class="gap-section"><div class="gap-title">BULLET CHANGES (${cmp.bulletChanges.length})</div>
+            ${cmp.bulletChanges
+              .map(
+                (bc) => `
+              <div class="bullet-compare">
+                <div class="bc-company">${esc(bc.company)}</div>
+                <div class="bc-before">${esc(bc.original)}</div>
+                <div class="bc-after">${esc(bc.optimized)}</div>
+                ${bc.keywordsAdded.length ? `<div class="bc-kw">+${bc.keywordsAdded.join(", ")}</div>` : ""}
+              </div>`,
+              )
+              .join("")}
+          </div>`
+            : ""
+        }`;
+        } catch (err) {
+          feed.innerHTML = `<div class="feed-idle">[ COMPARE FAILED: ${err.message} ]</div>`;
+        }
+      }
+
+      document.getElementById("copyResume").addEventListener("click", () => {
+        if (!currentOptimized) return;
+        const text = buildPlainTextResume(currentOptimized.optimizedProfile);
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById("copyResume");
+          btn.textContent = "✔ COPIED";
+          setTimeout(() => {
+            btn.textContent = "⎘ COPY";
+          }, 2000);
+        });
+      });
+
+      document
+        .getElementById("dlResume")
+        .addEventListener("click", async () => {
+          if (!currentOptimized) return;
+          const text = buildPlainTextResume(currentOptimized.optimizedProfile);
+          const res = await fetch("/api/download", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: text,
+              filename: `${currentOptimized.company}-${currentOptimized.role}-resume.txt`,
+            }),
+          });
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${currentOptimized.company}-${currentOptimized.role}-resume.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+
+      function buildPlainTextResume(p) {
+        const lines = [];
+        lines.push(p.title.toUpperCase());
+        lines.push(
+          `${p.contact.email} | ${p.contact.phone || ""} | ${p.contact.linkedin || ""} | ${p.contact.github || ""}`,
+        );
+        lines.push("");
+        lines.push("PROFESSIONAL SUMMARY");
+        lines.push(p.summary);
+        lines.push("");
+        lines.push("SKILLS");
+        p.skills.forEach((cat) =>
+          lines.push(`${cat.category}: ${cat.items.join(", ")}`),
+        );
+        lines.push("");
+        lines.push("EXPERIENCE");
+        p.experience.forEach((exp) => {
+          lines.push(`${exp.role} | ${exp.company} | ${exp.period}`);
+          exp.bullets.forEach((b) =>
+            lines.push(`  • ${b.optimized || b.text}`),
+          );
+          lines.push("");
+        });
+        if (p.projects.length) {
+          lines.push("PROJECTS");
+          p.projects.forEach((proj) => {
+            lines.push(`${proj.name} | ${proj.tech.join(", ")}`);
+            proj.bullets.forEach((b) =>
+              lines.push(`  • ${b.optimized || b.text}`),
+            );
+            lines.push("");
+          });
+        }
+        lines.push("EDUCATION");
+        p.education.forEach((e) =>
+          lines.push(`${e.degree} | ${e.institution} | ${e.period}`),
+        );
+        return lines.join("\n");
+      }
+
+      function addLive(type, msg) {
+        const feed = document.getElementById("liveFeed");
+        const idle = feed.querySelector(".feed-idle");
+        if (idle) idle.remove();
+        const line = document.createElement("div");
+        line.className = `feed-line feed-${type}`;
+        line.innerHTML = `<span class="feed-ts">${nowStr()}</span><span class="feed-msg">${esc(msg)}</span>`;
+        feed.appendChild(line);
+        feed.scrollTop = feed.scrollHeight;
+        while (feed.children.length > 200) feed.removeChild(feed.firstChild);
+      }
+
+      function activateTab(name) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((t) => t.classList.remove("active"));
+        document.querySelector(`[data-tab="${name}"]`)?.classList.add("active");
+        document.getElementById(`tab-${name}`)?.classList.add("active");
+      }
+
+      function setStatus(msg) {
+        document.getElementById("sysStatus").textContent = msg.substring(0, 70);
+      }
+      function nowStr() {
+        return new Date().toLocaleTimeString("en-GB", { hour12: false });
+      }
+      function esc(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+    </script>
+  </body>
+</html>
